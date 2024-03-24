@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('index')
+@section('title') Index @endsection
+@section('content')
     
 
           <div class="text-center">
-      <button type="button" class="btn btn-success">Create a post</button>
+            <a href="{{route('posts.create')}}" class="btn btn-success">Create a post</a>
         </div>
 
         <table class="table mt-4">
@@ -26,8 +27,13 @@
               <td>{{$post['created_at']}}</td>
               <td>
                 <a href="{{route('posts.show',$post['id'])}}" class="btn btn-info">View</a>
-                <a href="#" class="btn btn-primary">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
+                <a href="{{route('posts.edit',$post['id'])}}" class="btn btn-primary">Edit</a>
+
+                <form style="display: inline" method="POST" action="{{route('posts.destroy',$post['id'])}}">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
               </td>
             </tr>
             @endforeach
@@ -36,3 +42,5 @@
         </table>
   </div>
   @endsection
+
+  

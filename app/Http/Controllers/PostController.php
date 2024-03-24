@@ -26,4 +26,46 @@ class PostController extends Controller
         return view('posts.show',['post' => $singlePost]);
 
     }
+
+    public function create(){
+        return view('posts.create');
+    }
+
+    public function store(){
+
+        // $request = request();
+        // dd($request->title, request()->all());
+
+        $data = request()->all();
+
+        $title = request()->title;
+        $description = request()->description;
+        $postCreator = request()->post_creator;
+
+        // dd($data, $title, $description, $postCreator);
+
+        return to_route('posts.index');
+    }
+
+    
+    public function edit(){
+        return view('posts.edit');
+    }
+
+    
+    public function update(){
+
+        $title = request()->title;
+        $description = request()->description;
+        $postCreator = request()->post_creator;
+
+        
+
+        return to_route('posts.show', 1);
+    }
+
+    public function destroy(){
+        
+        return to_route('posts.show', 1);
+    }
 }

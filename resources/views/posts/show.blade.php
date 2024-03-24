@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('show')
+@section('title') Show @endsection
+@section('content')
     
 
         <div class="card">
