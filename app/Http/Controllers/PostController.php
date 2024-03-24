@@ -1,34 +1,50 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function index(){
 
-        $allPosts = [
-            ['id' => 1, 'title' => 'PHP','posted_by' => 'Ahmad','created_at' => '2021-10-10 09:00:00'],
-            ['id' => 2, 'title' => 'Javascript','posted_by' => 'Mohamed','created_at' => '2022-08-20 07:00:00'],
-            ['id' => 3, 'title' => 'HTML','posted_by' => 'Mahmoud','created_at' => '2023-12-06 04:00:00'],
-            ['id' => 4, 'title' => 'CSS','posted_by' => 'Moustafa','created_at' => '2024-03-02 01:00:00'],
-        ];
-        return view('posts.index', ['posts'=> $allPosts]);
+        $postsFromDB = Post::all();
+        return view('posts.index', ['posts'=> $postsFromDB]);
     }
 
-    public function show($postId){
+    public function show(Post $post){ //type hinting
+        // dd($post);
+        // $singlePostFromDB = Post::findOrFail($post); //model object
 
-        $singlePost = [
-            'id' => 1, 'title' => 'PHP','description'=> 'PHP is cool language','posted_by' => 'Ahmad','created_at' => '2021-10-10 09:00:00',
-            
-        ];
-        return view('posts.show',['post' => $singlePost]);
+        // if(is_null($singlePostFromDB)){
+        //     return to_route('posts.index');
+        // }
+
+        // dd($singlePostFromDB);
+
+        // $singlePostFromDB = Post::where('id', $postId)->first; //model object
+        // dd($singlePostFromDB);
+
+        // $singlePostFromDB = Post::where('id', $postId)->get(); //collection object
+        // dd($singlePostFromDB);
+
+        // dd(
+        //     Post::where('title', 'PHP')->first() // select * from posts where title = 'php' limit 1;
+        // );
+
+        // dd(
+        //     Post::where('title', 'PHP')->get() // select * from posts where title = 'php';
+        // );
+
+        return view('posts.show',['post' => $post]);
 
     }
 
     public function create(){
-        return view('posts.create');
+
+        $users = User::all();
+        return view('posts.create', ['users'=> $users]);
     }
 
     public function store(){
@@ -44,28 +60,52 @@ class PostController extends Controller
 
         // dd($data, $title, $description, $postCreator);
 
+        // store the submited data to the database
+        // $post = new Post;
+
+        // $post->title = $title;
+        // $post->description = $description;
+
+        // $post-> save();
+
+
+        Post::create(['title'=> $title,'description'=> $description, 'user_id'=>$postCreator]);
+
         return to_route('posts.index');
     }
 
     
-    public function edit(){
-        return view('posts.edit');
+    public function edit(Post $post){
+
+        $users = User::all();
+        return view('posts.edit', ['users'=> $users, 'post' => $post]);
     }
 
     
-    public function update(){
+    public function update($postId){
 
         $title = request()->title;
         $description = request()->description;
         $postCreator = request()->post_creator;
 
         
+        $singlePostFromDB = Post::find($postId);
+        $singlePostFromDB->update([
+            'title'=> $title,
+            'description'=> $description,
+            'user_id'=>$postCreator
+        ]);
 
-        return to_route('posts.show', 1);
+        return to_route('posts.show', $postId);
     }
 
-    public function destroy(){
+    public function destroy($postId){
+
+        $post = Post::find($postId);
+        $post->delete();
+
+        // Post::where('id', $postId)->delete();
         
-        return to_route('posts.show', 1);
+        return to_route('posts.index', $postId);
     }
 }
